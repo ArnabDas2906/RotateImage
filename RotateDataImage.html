@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+<style>
+    canvas{border:1px solid red;}
+</style>
+
+<script>
+$(function(){
+
+    const canvas=document.getElementById("canvas");
+    const temp=document.getElementById("canvas");
+
+    const ctxtemp=temp.getContext("2d");
+    const ctx=canvas.getContext("2d");
+
+
+    let angleInDegrees=0;
+    const imageData = new ImageData(100, 200);
+    for (var i = 0; i < imageData.data.length; i++) {
+        imageData.data[i] = Math.round(255 * Math.random());
+      }
+    
+    ctxtemp.putImageData(imageData, 100, 100);   
+    
+    onRotateClick =() =>{
+        const enteredValue = parseInt(document.getElementById('inputangle').value);
+        if(enteredValue !== 0 && !isNaN(enteredValue)){
+            angleInDegrees = angleInDegrees + enteredValue;
+            if(angleInDegrees === 360){
+                angleInDegrees = 0;
+            }
+            drawRotated(angleInDegrees);
+        }
+        else{
+            alert("Enter Degree value");
+        }
+    }
+
+    function drawRotated(degrees){
+        ctxtemp.rotate(degrees*Math.PI/180);
+        ctxtemp.putImageData(imageData,-imageData.width/2,-imageData.width/2);
+        ctxtemp.restore();
+    }
+
+});
+</script>
+
+</head>
+
+<body>
+    <canvas id="canvas" width="640px" height="640px">
+    </canvas>
+    <input id="inputangle" type="number"/>
+    <button id="clockwise" onclick="onRotateClick()">Rotate</button>
+</body>
+</html>

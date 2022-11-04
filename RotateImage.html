@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+<style>
+    canvas{border:1px solid red;}
+</style>
+
+<script>
+$(function(){
+
+    const canvas=document.getElementById("canvas");
+    const ctx=canvas.getContext("2d");
+
+    let angleInDegrees=0;
+
+    const image=document.createElement("img");
+    image.onload=function(){
+        ctx.drawImage(image,canvas.width/2-image.width/2,canvas.height/2-image.width/2);
+    }
+    image.src="istockphoto-155666671-612x612.jpg";
+
+    onRotateClick =() =>{
+        const enteredValue = parseInt(document.getElementById('inputangle').value);
+        if(enteredValue !== 0 && !isNaN(enteredValue)){
+            angleInDegrees = angleInDegrees + enteredValue;
+            if(angleInDegrees === 360){
+                angleInDegrees = 0;
+            }
+            drawRotated(angleInDegrees);
+        }
+        else{
+            alert("Enter Degree value");
+        }
+    }
+
+    function drawRotated(degrees){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        // save the unrotated context of the canvas so we can restore it later
+        // the alternative is to untranslate & unrotate after drawing
+        ctx.save();
+        // move to the center of the canvas
+        ctx.translate(canvas.width/2,canvas.height/2);
+        // rotate the canvas to the specified degrees
+        ctx.rotate(degrees*Math.PI/180);
+        // draw the image
+        // since the context is rotated, the image will be rotated also
+        ctx.drawImage(image,-image.width/2,-image.width/2);
+        // we’re done with the rotating so restore the unrotated context
+        ctx.restore();
+    }
+});
+</script>
+
+</head>
+
+<body>
+    <canvas id="canvas" width="640px" height="640px"></canvas>
+    <input id="inputangle" type="number"/>
+    <button id="clockwise" onclick="onRotateClick()">Rotate</button>
+</body>
+</html>
