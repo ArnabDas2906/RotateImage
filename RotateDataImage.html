@@ -11,38 +11,49 @@
 $(function(){
 
     const canvas=document.getElementById("canvas");
-    const temp=document.getElementById("canvas");
+    // creating in memory canvas
+    const inMemoryCanvas=document.createElement("canvas");
 
-    const ctxtemp=temp.getContext("2d");
     const ctx=canvas.getContext("2d");
+    const ctxtemp=inMemoryCanvas.getContext("2d");    
 
-
-    let angleInDegrees=0;
+    // creating image from ImageData
     const imageData = new ImageData(100, 200);
     for (var i = 0; i < imageData.data.length; i++) {
         imageData.data[i] = Math.round(255 * Math.random());
-      }
+    }
+
+    // setting height width of the in memory canvas as the image
+    inMemoryCanvas.height = imageData.height;
+    inMemoryCanvas.width = imageData.width;   
     
-    ctxtemp.putImageData(imageData, 100, 100);   
+    // drawing image of the canvas with zero degree rotation
+    drawRotated(0);     
     
     onRotateClick =() =>{
         const enteredValue = parseInt(document.getElementById('inputangle').value);
-        if(enteredValue !== 0 && !isNaN(enteredValue)){
-            angleInDegrees = angleInDegrees + enteredValue;
-            if(angleInDegrees === 360){
-                angleInDegrees = 0;
-            }
-            drawRotated(angleInDegrees);
+        if(enteredValue !== 0 && !isNaN(enteredValue)){           
+            drawRotated(enteredValue);
         }
         else{
-            alert("Enter Degree value");
+            alert("Enter Degree value to rotate the image");
         }
     }
 
     function drawRotated(degrees){
-        ctxtemp.rotate(degrees*Math.PI/180);
-        ctxtemp.putImageData(imageData,-imageData.width/2,-imageData.width/2);
-        ctxtemp.restore();
+        // save the unrotated context of the canvas so we can restore it later
+        // the alternative is to untranslate & unrotate after drawing
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.save();
+        // putting image in the inmemory canvas
+        ctxtemp.putImageData(imageData, 0,0);  
+        // move to the center of the canvas
+        ctx.translate((canvas.width/2),(canvas.height/2));
+        // rotate the canvas to the specified degrees
+        ctx.rotate(degrees*Math.PI/180);
+        ctx.translate((-canvas.width/2),(-canvas.height/2));
+        // draw image of the inmemory canvas in the main canvas
+        ctx.drawImage(inMemoryCanvas,((canvas.width/2)-(inMemoryCanvas.width/2)),((canvas.height/2)-(inMemoryCanvas.height/2)));
     }
 
 });
@@ -51,7 +62,7 @@ $(function(){
 </head>
 
 <body>
-    <canvas id="canvas" width="640px" height="640px">
+    <canvas id="canvas" width="300px" height="300px">
     </canvas>
     <input id="inputangle" type="number"/>
     <button id="clockwise" onclick="onRotateClick()">Rotate</button>

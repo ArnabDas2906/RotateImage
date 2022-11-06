@@ -15,6 +15,7 @@ $(function(){
 
     let angleInDegrees=0;
 
+    // Enter Degree value to rotate the image
     const image=document.createElement("img");
     image.onload=function(){
         ctx.drawImage(image,canvas.width/2-image.width/2,canvas.height/2-image.width/2);
@@ -36,9 +37,9 @@ $(function(){
     }
 
     function drawRotated(degrees){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
         // save the unrotated context of the canvas so we can restore it later
         // the alternative is to untranslate & unrotate after drawing
+        ctx.clearRect(0,0,canvas.width,canvas.height);        
         ctx.save();
         // move to the center of the canvas
         ctx.translate(canvas.width/2,canvas.height/2);
